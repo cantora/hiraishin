@@ -1,20 +1,41 @@
 (make-variable-buffer-local
- (defvar hiraishin-mark-set '()
-   "set of marks to track for this buffer"))
+  (defvar hiraishin-mark-set '()
+    "set of marks to track for this buffer"))
+
+(defun hiraishin-init-mark (mk)
+  (let* ((pos (marker-position mk))
+         (ol (make-overlay pos (+ pos 1))))
+    (progn
+      (overlay-put ol 'face '(:inverse-video t))
+      (cons (cons mk ol) hiraishin-mark-set)
+    )
+  )
+)
+
+(defun hiraishin-delete-mark (rec)
+  (let ((new-marks (delete rec hiraishin-mark-set)))
+    (progn
+      (delete-overlay (cdr rec))
+      new-marks
+    )
+  )
+)
 
 (defun hiraishin-toggle-mark ()
   (interactive)
-  (let ((pm (point-marker)))
-    (if (member pm hiraishin-mark-set)
-        (setq hiraishin-mark-set (delete pm hiraishin-mark-set))
-        (setq hiraishin-mark-set (cons pm hiraishin-mark-set))
+  (let* ((pm  (point-marker))
+         (rec (assoc pm hiraishin-mark-set)))
+    (setq hiraishin-mark-set
+          (if rec
+              (hiraishin-delete-mark rec)
+              (hiraishin-init-mark pm)
+          )
     )
   )
 )
 
 (defun hiraishin-mark-list ()
-  (setq hiraishin-mark-set (sort hiraishin-mark-set '<))
-  hiraishin-mark-set
+  (sort (mapcar 'car hiraishin-mark-set) '<)
 )
 
 (defun hiraishin-find-mark (mlist pred)
