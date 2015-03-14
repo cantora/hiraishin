@@ -98,4 +98,4 @@
   :global t
 )
 
-(provide 'hiraishin-mode)
+(provide 'hiraishin)
