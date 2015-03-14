@@ -2,11 +2,12 @@
  (defvar hiraishin-mark-set '()
    "set of marks to track for this buffer"))
 
-(defun hiraishin-add-mark ()
+(defun hiraishin-toggle-mark ()
   (interactive)
   (let ((pm (point-marker)))
-    (unless (member pm hiraishin-mark-set)
-            (setq hiraishin-mark-set (cons pm hiraishin-mark-set))
+    (if (member pm hiraishin-mark-set)
+        (setq hiraishin-mark-set (delete pm hiraishin-mark-set))
+        (setq hiraishin-mark-set (cons pm hiraishin-mark-set))
     )
   )
 )
@@ -69,7 +70,7 @@
   "hiraishin: flying thunder god techinique for emacs"
   :lighter " hiraishin"
   :keymap (let ((map (make-sparse-keymap)))
-            (define-key map (kbd "C-c m") 'hiraishin-add-mark)
+            (define-key map (kbd "C-c m") 'hiraishin-toggle-mark)
             (define-key map (kbd "C-c n") 'hiraishin-goto-next-mark)
             (define-key map (kbd "C-c p") 'hiraishin-goto-prev-mark)
             map)
